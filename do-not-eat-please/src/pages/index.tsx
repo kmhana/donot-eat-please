@@ -35,7 +35,7 @@ function Page() {
   return (
     <ImageBackground
       source={{
-        uri: 'https://raw.githubusercontent.com/kmhana/donot-eat-please/main/do-not-eat-please/img/bright.png',
+        uri: 'https://raw.githubusercontent.com/kmhana/donot-eat-please/main/do-not-eat-please/img/ligth.png',
       }}
       style={styles.container}
       imageStyle={styles.bgImage}
