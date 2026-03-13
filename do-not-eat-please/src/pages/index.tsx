@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7FAFC',
   },
   bgImage: {
-    opacity: 0.6,
+    opacity: 0.3,
     resizeMode: 'contain',
   },
   header: {
