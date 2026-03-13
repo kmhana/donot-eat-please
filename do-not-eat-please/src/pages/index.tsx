@@ -1,4 +1,5 @@
 import { createRoute } from '@granite-js/react-native';
+import { Icon } from '@toss/tds-react-native';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -38,7 +39,7 @@ function Page() {
           onPress={() => navigation.navigate('/add-food')}
           activeOpacity={0.7}
         >
-          <Text style={styles.addButtonText}>+</Text>
+          <Icon name="plus" size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
       <FlatList
