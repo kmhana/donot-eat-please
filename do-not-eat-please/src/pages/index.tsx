@@ -1,6 +1,6 @@
 import { createRoute } from '@granite-js/react-native';
 import { Icon } from '@toss/tds-react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -22,7 +22,9 @@ export const Route = createRoute('/', {
 
 function Page() {
   const navigation = Route.useNavigation();
-  const { foodItems, isLoaded, logEating, deleteFoodItem } = useFoodContext();
+  const { foodItems, isLoaded, logEating, deleteFoodItem, reorderFoodItem } =
+    useFoodContext();
+  const [editMode, setEditMode] = useState(false);
 
   if (!isLoaded) {
     return (
@@ -35,30 +37,52 @@ function Page() {
   return (
     <ImageBackground
       source={{
-        uri: 'https://raw.githubusercontent.com/kmhana/donot-eat-please/main/do-not-eat-please/img/ligth.png',
+        uri: 'https://raw.githubusercontent.com/kmhana/donot-eat-please/main/do-not-eat-please/img/white.png',
       }}
       style={styles.container}
       imageStyle={styles.bgImage}
     >
       <View style={styles.header}>
         <Text style={styles.title}>제발 먹지마..</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate('/add-food')}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.addButtonLabel}>음식 추가</Text>
-          <Icon name="icon-plus-mono" size={16} color="#4A5568" />
-        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          {foodItems.length > 1 && (
+            <TouchableOpacity
+              style={[styles.editButton, editMode && styles.editButtonActive]}
+              onPress={() => setEditMode((v) => !v)}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  styles.editButtonLabel,
+                  editMode && styles.editButtonLabelActive,
+                ]}
+              >
+                {editMode ? '완료' : '편집'}
+              </Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => navigation.navigate('/add-food')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.addButtonLabel}>음식 추가</Text>
+            <Icon name="icon-plus-mono" size={16} color="#4A5568" />
+          </TouchableOpacity>
+        </View>
       </View>
       <FlatList
         data={foodItems}
         keyExtractor={(item: FoodItem) => item.id}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <FoodItemRow
             food={item}
             onEat={logEating}
             onDelete={deleteFoodItem}
+            editMode={editMode}
+            isFirst={index === 0}
+            isLast={index === foodItems.length - 1}
+            onReorder={reorderFoodItem}
           />
         )}
         ListEmptyComponent={
@@ -109,6 +133,31 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '800',
     color: '#1A202C',
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  editButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  editButtonActive: {
+    backgroundColor: '#3182F6',
+    borderColor: '#3182F6',
+  },
+  editButtonLabel: {
+    color: '#4A5568',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  editButtonLabelActive: {
+    color: '#FFFFFF',
   },
   addButton: {
     flexDirection: 'row',

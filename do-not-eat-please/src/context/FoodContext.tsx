@@ -23,6 +23,7 @@ interface FoodContextValue {
   deleteFoodItem: (id: string) => Promise<void>;
   logEating: (foodId: string, date?: string) => Promise<void>;
   deleteEatingRecord: (foodId: string, eatenAt: string) => Promise<void>;
+  reorderFoodItem: (id: string, direction: 'up' | 'down') => Promise<void>;
 }
 
 const FoodContext = createContext<FoodContextValue | null>(null);
@@ -98,6 +99,24 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
     [eatingRecords],
   );
 
+  const reorderFoodItem = useCallback(
+    async (id: string, direction: 'up' | 'down') => {
+      const idx = foodItems.findIndex((f) => f.id === id);
+      if (idx < 0) return;
+      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= foodItems.length) return;
+      const next = [...foodItems];
+      const item = next[idx];
+      const target = next[targetIdx];
+      if (item === undefined || target === undefined) return;
+      next[idx] = target;
+      next[targetIdx] = item;
+      setFoodItems(next);
+      await saveFoodItems(next);
+    },
+    [foodItems],
+  );
+
   return (
     <FoodContext.Provider
       value={{
@@ -108,6 +127,7 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
         deleteFoodItem,
         logEating,
         deleteEatingRecord,
+        reorderFoodItem,
       }}
     >
       {children}

@@ -10,14 +10,40 @@ import {
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import type { FoodItem } from '../types';
 
+const COMFORT_MESSAGES = [
+  '다음엔 참을 수 있어!',
+  '괜찮아, 내일부터 다시!',
+  '다음엔 꼭 참아보자!',
+  '오늘은 넘어가자..',
+  '이번이 마지막이다..!',
+] as const;
+
+function randomComfort(): string {
+  const idx = Math.floor(Math.random() * COMFORT_MESSAGES.length);
+  return COMFORT_MESSAGES[idx] ?? COMFORT_MESSAGES[0];
+}
+
 interface FoodItemRowProps {
   food: FoodItem;
   onEat: (id: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  editMode?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
+  onReorder?: (id: string, direction: 'up' | 'down') => Promise<void>;
 }
 
-export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
+export function FoodItemRow({
+  food,
+  onEat,
+  onDelete,
+  editMode = false,
+  isFirst = false,
+  isLast = false,
+  onReorder,
+}: FoodItemRowProps) {
   const [justEaten, setJustEaten] = useState(false);
+  const [comfortMsg, setComfortMsg] = useState('');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const swipeableRef = useRef<Swipeable | null>(null);
 
@@ -29,9 +55,10 @@ export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
 
   const handleEat = () => {
     void onEat(food.id);
+    setComfortMsg(randomComfort());
     setJustEaten(true);
     if (timerRef.current !== null) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setJustEaten(false), 1500);
+    timerRef.current = setTimeout(() => setJustEaten(false), 2500);
   };
 
   const handleDelete = () => {
@@ -63,6 +90,40 @@ export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
     );
   };
 
+  if (editMode) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.reorderButtons}>
+          <TouchableOpacity
+            onPress={() => void onReorder?.(food.id, 'up')}
+            disabled={isFirst}
+            activeOpacity={0.7}
+            style={[styles.arrowButton, isFirst && styles.arrowButtonDisabled]}
+          >
+            <Icon
+              name="icon-arrow-up-mono"
+              size={18}
+              color={isFirst ? '#CBD5E0' : '#4A5568'}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => void onReorder?.(food.id, 'down')}
+            disabled={isLast}
+            activeOpacity={0.7}
+            style={[styles.arrowButton, isLast && styles.arrowButtonDisabled]}
+          >
+            <Icon
+              name="icon-arrow-down-mono"
+              size={18}
+              color={isLast ? '#CBD5E0' : '#4A5568'}
+            />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.name}>{food.name}</Text>
+      </View>
+    );
+  }
+
   return (
     <Swipeable
       ref={swipeableRef}
@@ -78,7 +139,7 @@ export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
           activeOpacity={0.7}
         >
           <Text style={styles.eatButtonText}>
-            {justEaten ? '기록됨 ✓' : '먹었어요 ㅠㅜ'}
+            {justEaten ? comfortMsg : '먹었어요 ㅠㅜ'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -114,6 +175,18 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '600',
+  },
+  reorderButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginRight: 12,
+  },
+  arrowButton: {
+    padding: 4,
+  },
+  arrowButtonDisabled: {
+    opacity: 0.4,
   },
   deleteAction: {
     backgroundColor: '#E53E3E',
