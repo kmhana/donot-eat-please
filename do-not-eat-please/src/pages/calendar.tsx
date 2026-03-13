@@ -1,13 +1,15 @@
 import { createRoute } from '@granite-js/react-native';
 import { Icon } from '@toss/tds-react-native';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  Animated,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {
   CalendarGrid,
   MonthHeader,
@@ -23,7 +25,7 @@ export const Route = createRoute('/calendar', {
 
 function Page() {
   const navigation = Route.useNavigation();
-  const { foodItems, eatingRecords } = useFoodContext();
+  const { foodItems, eatingRecords, deleteEatingRecord } = useFoodContext();
 
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
@@ -90,27 +92,19 @@ function Page() {
             <Text style={styles.emptyDetail}>기록이 없어요</Text>
           ) : (
             <ScrollView style={styles.recordList}>
-              {selectedRecords.map((record) => {
-                const food = foodItems.find((f) => f.id === record.foodId);
-                const time = new Date(record.eatenAt).toLocaleTimeString(
-                  'ko-KR',
-                  {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  },
-                );
-                return (
-                  <View
-                    key={`${record.foodId}-${record.eatenAt}`}
-                    style={styles.recordItem}
-                  >
-                    <Text style={styles.recordFoodName}>
-                      {food?.name ?? '(삭제된 음식)'}
-                    </Text>
-                    <Text style={styles.recordTime}>{time}</Text>
-                  </View>
-                );
-              })}
+              {selectedRecords.map((record) => (
+                <RecordRow
+                  key={`${record.foodId}-${record.eatenAt}`}
+                  record={record}
+                  foodName={
+                    foodItems.find((f) => f.id === record.foodId)?.name ??
+                    '(삭제된 음식)'
+                  }
+                  onDelete={() =>
+                    deleteEatingRecord(record.foodId, record.eatenAt)
+                  }
+                />
+              ))}
             </ScrollView>
           )}
         </View>
@@ -123,6 +117,61 @@ function Page() {
         onNavigateCalendar={() => {}}
       />
     </View>
+  );
+}
+
+function RecordRow({
+  record,
+  foodName,
+  onDelete,
+}: {
+  record: { eatenAt: string };
+  foodName: string;
+  onDelete: () => void;
+}) {
+  const swipeableRef = useRef<Swipeable | null>(null);
+  const time = new Date(record.eatenAt).toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  const renderRightActions = (
+    _progress: Animated.AnimatedInterpolation<number>,
+    dragX: Animated.AnimatedInterpolation<number>,
+  ) => {
+    const scale = dragX.interpolate({
+      inputRange: [-70, 0],
+      outputRange: [1, 0.5],
+      extrapolate: 'clamp',
+    });
+    return (
+      <TouchableOpacity
+        style={styles.deleteAction}
+        onPress={() => {
+          swipeableRef.current?.close();
+          void onDelete();
+        }}
+        activeOpacity={0.8}
+      >
+        <Animated.View style={{ transform: [{ scale }] }}>
+          <Icon name="icon-bin-mono" size={18} color="#FFFFFF" />
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      overshootRight={false}
+      rightThreshold={40}
+    >
+      <View style={styles.recordItem}>
+        <Text style={styles.recordFoodName}>{foodName}</Text>
+        <Text style={styles.recordTime}>{time}</Text>
+      </View>
+    </Swipeable>
   );
 }
 
@@ -180,5 +229,11 @@ const styles = StyleSheet.create({
   recordTime: {
     fontSize: 13,
     color: '#718096',
+  },
+  deleteAction: {
+    backgroundColor: '#E53E3E',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 60,
   },
 });

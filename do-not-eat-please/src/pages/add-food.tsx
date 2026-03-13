@@ -8,7 +8,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SvgUri } from 'react-native-svg';
 import { useFoodContext } from '../context/FoodContext';
+
+const TOSSFACE_URL = 'https://static.toss.im/2d-emojis/svg';
+
+const SUGGESTED_FOODS = [
+  { label: '야식', emoji: `${TOSSFACE_URL}/u1F319.svg` },
+  { label: '치킨', emoji: `${TOSSFACE_URL}/u1F357.svg` },
+  { label: '피자', emoji: `${TOSSFACE_URL}/u1F355.svg` },
+{ label: '라면', emoji: `${TOSSFACE_URL}/u1F35C.svg` },
+  { label: '간식', emoji: `${TOSSFACE_URL}/u1F370.svg` },
+  { label: '탄산음료', emoji: `${TOSSFACE_URL}/u1F964.svg` },
+  { label: '커피', emoji: `${TOSSFACE_URL}/u2615.svg` },
+  { label: '술', emoji: `${TOSSFACE_URL}/u1F37A.svg` },
+] as const;
 
 export const Route = createRoute('/add-food', {
   component: Page,
@@ -60,6 +74,24 @@ function Page() {
         >
           <Text style={styles.saveButtonText}>저장</Text>
         </TouchableOpacity>
+        <View style={styles.suggestSection}>
+          <Text style={styles.suggestLabel}>빠른 추가</Text>
+          <View style={styles.chipWrap}>
+            {SUGGESTED_FOODS.map((item) => (
+              <TouchableOpacity
+                key={item.label}
+                style={styles.chip}
+                onPress={() => {
+                  void addFoodItem(item.label).then(() => navigation.goBack());
+                }}
+                activeOpacity={0.7}
+              >
+                <SvgUri uri={item.emoji} width={20} height={20} />
+                <Text style={styles.chipText}>{item.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -118,5 +150,37 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
+  },
+  suggestSection: {
+    marginTop: 28,
+  },
+  suggestLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#4A5568',
+    marginBottom: 12,
+  },
+  chipWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EBF4FF',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    gap: 6,
+  },
+  chipEmoji: {
+    width: 20,
+    height: 20,
+  },
+  chipText: {
+    fontSize: 14,
+    color: '#3182F6',
+    fontWeight: '600',
   },
 });
