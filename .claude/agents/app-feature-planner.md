@@ -1,6 +1,6 @@
 ---
 name: app-feature-planner
-description: "Use this agent when a user wants to plan features, architecture, and implementation steps for a new app or feature set. This agent is especially useful at the start of a project when the user has a rough idea but needs structured guidance on what components, screens, and logic are needed.\\n\\n<example>\\nContext: The user wants to build a food-restriction tracker app called '먹지마 제발..' using the Granite React Native framework.\\nuser: '앱을 만들려고 하는데 어떤게 필요할까? 참고 먹지 않으려는 음식을 기록하고 먹으면 캘린더에 기록하게 하고 싶어'\\nassistant: '좋아요! 앱 기획을 도와드릴게요. app-feature-planner 에이전트를 사용해서 필요한 기능과 구조를 정리해볼게요.'\\n<commentary>\\nThe user has a rough app idea and needs structured feature planning. Use the app-feature-planner agent to break down screens, data models, and implementation steps.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: User is working in the Granite React Native project and wants to add a new feature.\\nuser: '캘린더 화면에 음식 기록 기능을 추가하고 싶어'\\nassistant: '캘린더 기록 기능을 추가하는 방법을 계획해드릴게요. app-feature-planner 에이전트로 구체적인 구현 계획을 세워볼게요.'\\n<commentary>\\nThe user wants to plan a new feature. Use the app-feature-planner agent to outline what pages, components, and data structures are needed.\\n</commentary>\\n</example>"
+description: "Use this agent when a user wants to plan features, architecture, and implementation steps for a new app or feature set. This agent is especially useful at the start of a project when the user has a rough idea but needs structured guidance on what components, screens, and logic are needed.\\n\\n<example>\\nContext: The user wants to build a food-restriction tracker app called '제발 먹지마..' using the Granite React Native framework.\\nuser: '앱을 만들려고 하는데 어떤게 필요할까? 참고 먹지 않으려는 음식을 기록하고 먹으면 캘린더에 기록하게 하고 싶어'\\nassistant: '좋아요! 앱 기획을 도와드릴게요. app-feature-planner 에이전트를 사용해서 필요한 기능과 구조를 정리해볼게요.'\\n<commentary>\\nThe user has a rough app idea and needs structured feature planning. Use the app-feature-planner agent to break down screens, data models, and implementation steps.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: User is working in the Granite React Native project and wants to add a new feature.\\nuser: '캘린더 화면에 음식 기록 기능을 추가하고 싶어'\\nassistant: '캘린더 기록 기능을 추가하는 방법을 계획해드릴게요. app-feature-planner 에이전트로 구체적인 구현 계획을 세워볼게요.'\\n<commentary>\\nThe user wants to plan a new feature. Use the app-feature-planner agent to outline what pages, components, and data structures are needed.\\n</commentary>\\n</example>"
 model: opus
 color: red
 memory: project
@@ -82,7 +82,7 @@ Always respond in the same language the user used. Structure your output as foll
 [Concrete first steps the developer should take]
 ```
 
-## Specific Guidance for '먹지마 제발..' App
+## Specific Guidance for '제발 먹지마..' App
 
 When planning this food-restriction tracker app, consider:
 - **Forbidden Foods List**: A screen to add/remove foods the user wants to avoid

@@ -4,7 +4,7 @@ description: Core architectural decisions and patterns for the do-not-eat-please
 type: project
 ---
 
-App is a food restriction tracker ("먹지마 제발..") built with Granite React Native.
+App is a food restriction tracker ("제발 먹지마..") built with Granite React Native.
 
 **Why:** Micro-frontend app in the Apps-in-Toss ecosystem.
 **How to apply:** All reviews must check two-layer pages pattern, FoodContext placement in _app.tsx, and route-scoped navigation.

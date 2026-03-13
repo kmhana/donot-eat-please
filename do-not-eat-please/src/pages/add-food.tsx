@@ -17,7 +17,7 @@ const SUGGESTED_FOODS = [
   { label: '야식', emoji: `${TOSSFACE_URL}/u1F319.svg` },
   { label: '치킨', emoji: `${TOSSFACE_URL}/u1F357.svg` },
   { label: '피자', emoji: `${TOSSFACE_URL}/u1F355.svg` },
-{ label: '라면', emoji: `${TOSSFACE_URL}/u1F35C.svg` },
+  { label: '라면', emoji: `${TOSSFACE_URL}/u1F35C.svg` },
   { label: '간식', emoji: `${TOSSFACE_URL}/u1F370.svg` },
   { label: '탄산음료', emoji: `${TOSSFACE_URL}/u1F964.svg` },
   { label: '커피', emoji: `${TOSSFACE_URL}/u2615.svg` },

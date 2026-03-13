@@ -4,6 +4,7 @@ import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  ImageBackground,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -32,15 +33,22 @@ function Page() {
   }
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={{
+        uri: 'https://raw.githubusercontent.com/kmhana/donot-eat-please/main/do-not-eat-please/img/bright.png',
+      }}
+      style={styles.container}
+      imageStyle={styles.bgImage}
+    >
       <View style={styles.header}>
-        <Text style={styles.title}>먹지마 제발..</Text>
+        <Text style={styles.title}>제발 먹지마..</Text>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => navigation.navigate('/add-food')}
           activeOpacity={0.7}
         >
-          <Icon name="icon-plus-mono" size={20} color="#FFFFFF" />
+          <Text style={styles.addButtonLabel}>음식 추가</Text>
+          <Icon name="icon-plus-mono" size={16} color="#4A5568" />
         </TouchableOpacity>
       </View>
       <FlatList
@@ -68,7 +76,7 @@ function Page() {
           navigation.reset({ index: 0, routes: [{ name: '/calendar' }] })
         }
       />
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -82,6 +90,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7FAFC',
+  },
+  bgImage: {
+    opacity: 0.3,
+    resizeMode: 'contain',
   },
   header: {
     flexDirection: 'row',
@@ -99,12 +111,18 @@ const styles = StyleSheet.create({
     color: '#1A202C',
   },
   addButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#3182F6',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#E2E8F0',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    gap: 4,
+  },
+  addButtonLabel: {
+    color: '#2D3748',
+    fontSize: 13,
+    fontWeight: '700',
   },
   addButtonText: {
     color: '#FFFFFF',
