@@ -1,6 +1,7 @@
 export interface FoodItem {
   id: string;
   name: string;
+  emoji?: string; // Tossface SVG URL
   createdAt: string;
 }
 

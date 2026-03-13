@@ -22,8 +22,14 @@ export const Route = createRoute('/', {
 
 function Page() {
   const navigation = Route.useNavigation();
-  const { foodItems, isLoaded, logEating, deleteFoodItem, reorderFoodItem } =
-    useFoodContext();
+  const {
+    foodItems,
+    eatingRecords,
+    isLoaded,
+    logEating,
+    deleteFoodItem,
+    reorderFoodItem,
+  } = useFoodContext();
   const [editMode, setEditMode] = useState(false);
 
   if (!isLoaded) {
@@ -77,6 +83,7 @@ function Page() {
         renderItem={({ item, index }) => (
           <FoodItemRow
             food={item}
+            eatingRecords={eatingRecords}
             onEat={logEating}
             onDelete={deleteFoodItem}
             editMode={editMode}

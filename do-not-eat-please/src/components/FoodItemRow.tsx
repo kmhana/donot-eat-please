@@ -8,13 +8,15 @@ import {
   View,
 } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import type { FoodItem } from '../types';
+import { SvgUri } from 'react-native-svg';
+import type { EatingRecord, FoodItem } from '../types';
 
 const COMFORT_MESSAGES = [
   '다음엔 참을 수 있어!',
   '괜찮아, 내일부터 다시!',
   '다음엔 꼭 참아보자!',
-  '오늘은 넘어가자..',
+  '또 실패야??',
+  '안돼!! 참아봐',
   '이번이 마지막이다..!',
 ] as const;
 
@@ -23,8 +25,25 @@ function randomComfort(): string {
   return COMFORT_MESSAGES[idx] ?? COMFORT_MESSAGES[0];
 }
 
+function getStreakDays(foodId: string, records: EatingRecord[]): number | null {
+  const foodRecords = records.filter((r) => r.foodId === foodId);
+  if (foodRecords.length === 0) return null;
+  const initial = foodRecords[0]?.date ?? '';
+  const lastDate = foodRecords.reduce(
+    (latest, r) => (r.date > latest ? r.date : latest),
+    initial,
+  );
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  if (lastDate === todayStr) return 0;
+  const last = new Date(`${lastDate}T00:00:00`);
+  const now = new Date(`${todayStr}T00:00:00`);
+  return Math.round((now.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
+}
+
 interface FoodItemRowProps {
   food: FoodItem;
+  eatingRecords: EatingRecord[];
   onEat: (id: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
   editMode?: boolean;
@@ -35,6 +54,7 @@ interface FoodItemRowProps {
 
 export function FoodItemRow({
   food,
+  eatingRecords,
   onEat,
   onDelete,
   editMode = false,
@@ -42,6 +62,7 @@ export function FoodItemRow({
   isLast = false,
   onReorder,
 }: FoodItemRowProps) {
+  const streakDays = getStreakDays(food.id, eatingRecords);
   const [justEaten, setJustEaten] = useState(false);
   const [comfortMsg, setComfortMsg] = useState('');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -119,7 +140,22 @@ export function FoodItemRow({
             />
           </TouchableOpacity>
         </View>
-        <Text style={styles.name}>{food.name}</Text>
+        {food.emoji && (
+          <SvgUri
+            uri={food.emoji}
+            width={22}
+            height={22}
+            style={styles.emoji}
+          />
+        )}
+        <View style={styles.nameArea}>
+          <Text style={styles.name}>{food.name}</Text>
+          {streakDays !== null && (
+            <Text style={styles.streak}>
+              {streakDays === 0 ? '오늘 먹음' : `${streakDays}일째 참는 중`}
+            </Text>
+          )}
+        </View>
       </View>
     );
   }
@@ -132,7 +168,22 @@ export function FoodItemRow({
       rightThreshold={40}
     >
       <View style={styles.container}>
-        <Text style={styles.name}>{food.name}</Text>
+        {food.emoji && (
+          <SvgUri
+            uri={food.emoji}
+            width={22}
+            height={22}
+            style={styles.emoji}
+          />
+        )}
+        <View style={styles.nameArea}>
+          <Text style={styles.name}>{food.name}</Text>
+          {streakDays !== null && (
+            <Text style={styles.streak}>
+              {streakDays === 0 ? '오늘 먹음' : `${streakDays}일째 참는 중`}
+            </Text>
+          )}
+        </View>
         <TouchableOpacity
           style={[styles.eatButton, justEaten && styles.eatButtonDone]}
           onPress={handleEat}
@@ -157,10 +208,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F0F4F8',
   },
-  name: {
+  emoji: {
+    marginRight: 8,
+  },
+  nameArea: {
     flex: 1,
+  },
+  name: {
     fontSize: 16,
     color: '#2D3748',
+  },
+  streak: {
+    fontSize: 12,
+    color: '#ED8936',
+    fontWeight: '600',
+    marginTop: 2,
   },
   eatButton: {
     backgroundColor: '#3182F6',

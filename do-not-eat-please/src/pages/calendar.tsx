@@ -18,6 +18,38 @@ import {
 } from '../components/CalendarGrid';
 import { TabBar } from '../components/TabBar';
 import { useFoodContext } from '../context/FoodContext';
+import type { EatingRecord, FoodItem } from '../types';
+
+function getMonthlyStats(
+  year: number,
+  month: number,
+  records: EatingRecord[],
+  foods: FoodItem[],
+) {
+  const prefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+  const monthRecords = records.filter((r) => r.date.startsWith(prefix));
+  const total = monthRecords.length;
+
+  const countMap = new Map<string, number>();
+  for (const r of monthRecords) {
+    countMap.set(r.foodId, (countMap.get(r.foodId) ?? 0) + 1);
+  }
+
+  let topFoodId: string | null = null;
+  let topCount = 0;
+  for (const [foodId, count] of countMap) {
+    if (count > topCount) {
+      topCount = count;
+      topFoodId = foodId;
+    }
+  }
+
+  const topFoodName = topFoodId
+    ? (foods.find((f) => f.id === topFoodId)?.name ?? '(삭제된 음식)')
+    : null;
+
+  return { total, topFoodName, topCount };
+}
 
 export const Route = createRoute('/calendar', {
   component: Page,
@@ -55,6 +87,8 @@ function Page() {
     setSelectedDay(null);
   };
 
+  const stats = getMonthlyStats(year, month, eatingRecords, foodItems);
+
   const handleDayPress = (dateStr: string) => {
     setSelectedDay(dateStr === selectedDay ? null : dateStr);
     setShowFoodPicker(false);
@@ -80,6 +114,16 @@ function Page() {
         foodItems={foodItems}
         onDayPress={handleDayPress}
       />
+      {stats.total > 0 && (
+        <View style={styles.statsBar}>
+          <Text style={styles.statsText}>이번 달 총 {stats.total}회 먹음</Text>
+          {stats.topFoodName && (
+            <Text style={styles.statsHighlight}>
+              {stats.topFoodName} {stats.topCount}번 먹었어..
+            </Text>
+          )}
+        </View>
+      )}
       {selectedDay === null && <View style={styles.spacer} />}
       {selectedDay !== null && (
         <View style={styles.dayDetail}>
@@ -234,6 +278,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  statsBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: '#F7FAFC',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  statsText: {
+    fontSize: 13,
+    color: '#4A5568',
+    fontWeight: '600',
+  },
+  statsHighlight: {
+    fontSize: 13,
+    color: '#ED8936',
+    fontWeight: '600',
   },
   spacer: {
     flex: 1,

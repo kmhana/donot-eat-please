@@ -19,7 +19,7 @@ interface FoodContextValue {
   foodItems: FoodItem[];
   eatingRecords: EatingRecord[];
   isLoaded: boolean;
-  addFoodItem: (name: string) => Promise<void>;
+  addFoodItem: (name: string, emoji?: string) => Promise<void>;
   deleteFoodItem: (id: string) => Promise<void>;
   logEating: (foodId: string, date?: string) => Promise<void>;
   deleteEatingRecord: (foodId: string, eatenAt: string) => Promise<void>;
@@ -46,10 +46,11 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addFoodItem = useCallback(
-    async (name: string) => {
+    async (name: string, emoji?: string) => {
       const newItem: FoodItem = {
         id: Date.now().toString(),
         name,
+        emoji,
         createdAt: new Date().toISOString(),
       };
       const next = [...foodItems, newItem];

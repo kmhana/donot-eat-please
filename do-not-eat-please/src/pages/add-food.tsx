@@ -82,7 +82,9 @@ function Page() {
                 key={item.label}
                 style={styles.chip}
                 onPress={() => {
-                  void addFoodItem(item.label).then(() => navigation.goBack());
+                  void addFoodItem(item.label, item.emoji).then(() =>
+                    navigation.goBack(),
+                  );
                 }}
                 activeOpacity={0.7}
               >
