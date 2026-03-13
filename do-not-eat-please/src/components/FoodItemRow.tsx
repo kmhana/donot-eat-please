@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import type { FoodItem } from 'types';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import type { FoodItem } from '../types';
 
 interface FoodItemRowProps {
   food: FoodItem;
@@ -10,11 +10,19 @@ interface FoodItemRowProps {
 
 export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
   const [justEaten, setJustEaten] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const handleEat = () => {
     void onEat(food.id);
     setJustEaten(true);
-    setTimeout(() => setJustEaten(false), 1500);
+    if (timerRef.current !== null) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setJustEaten(false), 1500);
   };
 
   const handleLongPress = () => {
@@ -31,12 +39,10 @@ export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
   };
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onLongPress={handleLongPress}
-      activeOpacity={0.8}
-    >
-      <Text style={styles.name}>{food.name}</Text>
+    <View style={styles.container}>
+      <Text style={styles.name} onLongPress={handleLongPress}>
+        {food.name}
+      </Text>
       <TouchableOpacity
         style={[styles.eatButton, justEaten && styles.eatButtonDone]}
         onPress={handleEat}
@@ -46,7 +52,7 @@ export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
           {justEaten ? '기록됨 ✓' : '먹었어요'}
         </Text>
       </TouchableOpacity>
-    </TouchableOpacity>
+    </View>
   );
 }
 

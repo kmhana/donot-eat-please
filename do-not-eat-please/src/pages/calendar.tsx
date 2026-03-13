@@ -1,11 +1,4 @@
 import { createRoute } from '@granite-js/react-native';
-import {
-  CalendarGrid,
-  MonthHeader,
-  WeekdayLabels,
-} from 'components/CalendarGrid';
-import { TabBar } from 'components/TabBar';
-import { useFoodContext } from 'context/FoodContext';
 import React, { useState } from 'react';
 import {
   ScrollView,
@@ -14,6 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {
+  CalendarGrid,
+  MonthHeader,
+  WeekdayLabels,
+} from '../components/CalendarGrid';
+import { TabBar } from '../components/TabBar';
+import { useFoodContext } from '../context/FoodContext';
 
 export const Route = createRoute('/calendar', {
   component: Page,
@@ -97,7 +97,10 @@ function Page() {
                   },
                 );
                 return (
-                  <View key={record.eatenAt} style={styles.recordItem}>
+                  <View
+                    key={`${record.foodId}-${record.eatenAt}`}
+                    style={styles.recordItem}
+                  >
                     <Text style={styles.recordFoodName}>
                       {food?.name ?? '(삭제된 음식)'}
                     </Text>

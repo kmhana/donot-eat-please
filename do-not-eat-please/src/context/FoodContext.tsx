@@ -1,9 +1,3 @@
-import {
-  loadEatingRecords,
-  loadFoodItems,
-  saveEatingRecords,
-  saveFoodItems,
-} from 'lib/storage';
 import type React from 'react';
 import {
   createContext,
@@ -12,7 +6,14 @@ import {
   useEffect,
   useState,
 } from 'react';
-import type { EatingRecord, FoodItem } from 'types';
+import { formatDate } from '../lib/calendarUtils';
+import {
+  loadEatingRecords,
+  loadFoodItems,
+  saveEatingRecords,
+  saveFoodItems,
+} from '../lib/storage';
+import type { EatingRecord, FoodItem } from '../types';
 
 interface FoodContextValue {
   foodItems: FoodItem[];
@@ -75,7 +76,7 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
       const now = new Date();
       const record: EatingRecord = {
         foodId,
-        date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`,
+        date: formatDate(now),
         eatenAt: now.toISOString(),
       };
       const next = [...eatingRecords, record];

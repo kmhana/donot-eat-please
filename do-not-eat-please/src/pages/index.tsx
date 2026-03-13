@@ -1,7 +1,4 @@
 import { createRoute } from '@granite-js/react-native';
-import { FoodItemRow } from 'components/FoodItemRow';
-import { TabBar } from 'components/TabBar';
-import { useFoodContext } from 'context/FoodContext';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -11,7 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import type { FoodItem } from 'types';
+import { FoodItemRow } from '../components/FoodItemRow';
+import { TabBar } from '../components/TabBar';
+import { useFoodContext } from '../context/FoodContext';
+import type { FoodItem } from '../types';
 
 export const Route = createRoute('/', {
   component: Page,

@@ -1,5 +1,4 @@
 import { createRoute } from '@granite-js/react-native';
-import { useFoodContext } from 'context/FoodContext';
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useFoodContext } from '../context/FoodContext';
 
 export const Route = createRoute('/add-food', {
   component: Page,

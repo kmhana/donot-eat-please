@@ -1,5 +1,5 @@
 import { Storage } from '@apps-in-toss/framework';
-import type { EatingRecord, FoodItem } from 'types';
+import type { EatingRecord, FoodItem } from '../types';
 
 const KEYS = {
   FOOD_ITEMS: 'food-items',

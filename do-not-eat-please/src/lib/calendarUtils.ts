@@ -1,4 +1,4 @@
-import type { CalendarDay, EatingRecord } from 'types';
+import type { CalendarDay, EatingRecord } from '../types';
 
 export function formatDate(date: Date): string {
   const y = date.getFullYear();

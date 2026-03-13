@@ -1,5 +1,9 @@
+import { Icon } from '@toss/tds-react-native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const ACTIVE_COLOR = '#3182F6';
+const INACTIVE_COLOR = '#A0AEC0';
 
 interface TabBarProps {
   activeTab: 'home' | 'calendar';
@@ -19,7 +23,11 @@ export function TabBar({
         onPress={onNavigateHome}
         activeOpacity={0.7}
       >
-        <Text style={styles.icon}>🏠</Text>
+        <Icon
+          name="home"
+          size={24}
+          color={activeTab === 'home' ? ACTIVE_COLOR : INACTIVE_COLOR}
+        />
         <Text
           style={[styles.label, activeTab === 'home' && styles.activeLabel]}
         >
@@ -31,7 +39,11 @@ export function TabBar({
         onPress={onNavigateCalendar}
         activeOpacity={0.7}
       >
-        <Text style={styles.icon}>📅</Text>
+        <Icon
+          name="calendar"
+          size={24}
+          color={activeTab === 'calendar' ? ACTIVE_COLOR : INACTIVE_COLOR}
+        />
         <Text
           style={[styles.label, activeTab === 'calendar' && styles.activeLabel]}
         >
@@ -54,9 +66,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  icon: {
-    fontSize: 20,
   },
   label: {
     fontSize: 11,

@@ -1,8 +1,8 @@
 import { AppsInToss } from '@apps-in-toss/framework';
 import type { InitialProps } from '@granite-js/react-native';
-import { FoodProvider } from 'context/FoodContext';
 import type { PropsWithChildren } from 'react';
 import { context } from '../require.context';
+import { FoodProvider } from './context/FoodContext';
 
 function AppContainer({ children }: PropsWithChildren<InitialProps>) {
   return <FoodProvider>{children}</FoodProvider>;

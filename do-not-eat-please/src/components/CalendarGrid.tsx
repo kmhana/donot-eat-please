@@ -1,7 +1,7 @@
-import { buildCalendarDays, todayString } from 'lib/calendarUtils';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import type { CalendarDay, EatingRecord, FoodItem } from 'types';
+import { buildCalendarDays, todayString } from '../lib/calendarUtils';
+import type { CalendarDay, EatingRecord, FoodItem } from '../types';
 
 const DOT_COLORS = [
   '#FC8181',
