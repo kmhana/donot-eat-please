@@ -24,7 +24,7 @@ export function TabBar({
         activeOpacity={0.7}
       >
         <Icon
-          name="home"
+          name="icon-home-mono"
           size={24}
           color={activeTab === 'home' ? ACTIVE_COLOR : INACTIVE_COLOR}
         />
@@ -40,7 +40,7 @@ export function TabBar({
         activeOpacity={0.7}
       >
         <Icon
-          name="calendar"
+          name="icon-book-opened-mono"
           size={24}
           color={activeTab === 'calendar' ? ACTIVE_COLOR : INACTIVE_COLOR}
         />
