@@ -1,5 +1,4 @@
 import { createRoute } from '@granite-js/react-native';
-import { Icon } from '@toss/tds-react-native';
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -32,7 +31,7 @@ function Page() {
           style={styles.backButton}
           activeOpacity={0.7}
         >
-          <Icon name="arrow-left" size={22} color="#4A5568" />
+          <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.title}>음식 추가</Text>
         <View style={styles.backButton} />

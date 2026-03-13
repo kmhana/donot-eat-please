@@ -1,5 +1,4 @@
 import { createRoute } from '@granite-js/react-native';
-import { Icon } from '@toss/tds-react-native';
 import React, { useState } from 'react';
 import {
   ScrollView,
@@ -81,7 +80,7 @@ function Page() {
               onPress={() => setSelectedDay(null)}
               activeOpacity={0.7}
             >
-              <Icon name="close" size={20} color="#A0AEC0" />
+              <Text style={styles.closeButton}>✕</Text>
             </TouchableOpacity>
           </View>
           {selectedRecords.length === 0 ? (

@@ -1,4 +1,3 @@
-import { Icon } from '@toss/tds-react-native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { buildCalendarDays, todayString } from '../lib/calendarUtils';
@@ -119,7 +118,7 @@ export function MonthHeader({
         style={styles.arrowButton}
         activeOpacity={0.7}
       >
-        <Icon name="chevron-left" size={24} color="#4A5568" />
+        <Text style={styles.arrowText}>‹</Text>
       </TouchableOpacity>
       <Text style={styles.monthTitle}>
         {year}년 {month + 1}월
@@ -129,7 +128,7 @@ export function MonthHeader({
         style={styles.arrowButton}
         activeOpacity={0.7}
       >
-        <Icon name="chevron-right" size={24} color="#4A5568" />
+        <Text style={styles.arrowText}>›</Text>
       </TouchableOpacity>
     </View>
   );
