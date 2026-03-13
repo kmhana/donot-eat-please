@@ -21,7 +21,7 @@ interface FoodContextValue {
   isLoaded: boolean;
   addFoodItem: (name: string) => Promise<void>;
   deleteFoodItem: (id: string) => Promise<void>;
-  logEating: (foodId: string) => Promise<void>;
+  logEating: (foodId: string, date?: string) => Promise<void>;
   deleteEatingRecord: (foodId: string, eatenAt: string) => Promise<void>;
 }
 
@@ -73,11 +73,11 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
   );
 
   const logEating = useCallback(
-    async (foodId: string) => {
+    async (foodId: string, date?: string) => {
       const now = new Date();
       const record: EatingRecord = {
         foodId,
-        date: formatDate(now),
+        date: date ?? formatDate(now),
         eatenAt: now.toISOString(),
       };
       const next = [...eatingRecords, record];

@@ -3,6 +3,7 @@ import { Icon } from '@toss/tds-react-native';
 import React, { useRef, useState } from 'react';
 import {
   Animated,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -25,7 +26,9 @@ export const Route = createRoute('/calendar', {
 
 function Page() {
   const navigation = Route.useNavigation();
-  const { foodItems, eatingRecords, deleteEatingRecord } = useFoodContext();
+  const { foodItems, eatingRecords, deleteEatingRecord, logEating } =
+    useFoodContext();
+  const [showFoodPicker, setShowFoodPicker] = useState(false);
 
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
@@ -54,6 +57,7 @@ function Page() {
 
   const handleDayPress = (dateStr: string) => {
     setSelectedDay(dateStr === selectedDay ? null : dateStr);
+    setShowFoodPicker(false);
   };
 
   const selectedRecords = selectedDay
@@ -88,27 +92,78 @@ function Page() {
               <Icon name="icon-x-mono" size={20} color="#A0AEC0" />
             </TouchableOpacity>
           </View>
-          {selectedRecords.length === 0 ? (
-            <Text style={styles.emptyDetail}>기록이 없어요</Text>
-          ) : (
-            <ScrollView style={styles.recordList}>
-              {selectedRecords.map((record) => (
-                <RecordRow
-                  key={`${record.foodId}-${record.eatenAt}`}
-                  record={record}
-                  foodName={
-                    foodItems.find((f) => f.id === record.foodId)?.name ??
-                    '(삭제된 음식)'
-                  }
-                  onDelete={() =>
-                    deleteEatingRecord(record.foodId, record.eatenAt)
-                  }
-                />
-              ))}
-            </ScrollView>
-          )}
+          <ScrollView style={styles.recordList}>
+            {selectedRecords.length === 0 && (
+              <Text style={styles.emptyDetail}>기록이 없어요</Text>
+            )}
+            {selectedRecords.map((record) => (
+              <RecordRow
+                key={`${record.foodId}-${record.eatenAt}`}
+                record={record}
+                foodName={
+                  foodItems.find((f) => f.id === record.foodId)?.name ??
+                  '(삭제된 음식)'
+                }
+                onDelete={() =>
+                  deleteEatingRecord(record.foodId, record.eatenAt)
+                }
+              />
+            ))}
+          </ScrollView>
+          <TouchableOpacity
+            style={styles.addRecordButton}
+            onPress={() => setShowFoodPicker(true)}
+            activeOpacity={0.7}
+          >
+            <Icon name="icon-plus-mono" size={16} color="#3182F6" />
+            <Text style={styles.addRecordText}>기록 추가</Text>
+          </TouchableOpacity>
         </View>
       )}
+      <Modal
+        visible={showFoodPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowFoodPicker(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowFoodPicker(false)}
+        >
+          <View style={styles.bottomSheet}>
+            <View style={styles.bottomSheetHandle} />
+            <View style={styles.bottomSheetHeader}>
+              <Text style={styles.bottomSheetTitle}>음식 선택</Text>
+              <TouchableOpacity
+                onPress={() => setShowFoodPicker(false)}
+                activeOpacity={0.7}
+              >
+                <Icon name="icon-x-mono" size={20} color="#A0AEC0" />
+              </TouchableOpacity>
+            </View>
+            {foodItems.length === 0 ? (
+              <Text style={styles.emptyDetail}>등록된 음식이 없어요</Text>
+            ) : (
+              <ScrollView>
+                {foodItems.map((food) => (
+                  <TouchableOpacity
+                    key={food.id}
+                    style={styles.bottomSheetItem}
+                    onPress={() => {
+                      void logEating(food.id, selectedDay ?? undefined);
+                      setShowFoodPicker(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.bottomSheetItemText}>{food.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
+          </View>
+        </TouchableOpacity>
+      </Modal>
       <TabBar
         activeTab="calendar"
         onNavigateHome={() =>
@@ -235,5 +290,63 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 60,
+  },
+  addRecordButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    gap: 4,
+  },
+  addRecordText: {
+    fontSize: 14,
+    color: '#3182F6',
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'flex-end',
+  },
+  bottomSheet: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    maxHeight: '50%',
+  },
+  bottomSheetHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#D1D5DB',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginTop: 12,
+    marginBottom: 16,
+  },
+  bottomSheetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  bottomSheetTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1A202C',
+  },
+  bottomSheetItem: {
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F4F8',
+  },
+  bottomSheetItemText: {
+    fontSize: 16,
+    color: '#2D3748',
   },
 });

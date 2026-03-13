@@ -78,7 +78,7 @@ export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
           activeOpacity={0.7}
         >
           <Text style={styles.eatButtonText}>
-            {justEaten ? '기록됨 ✓' : '먹었어요'}
+            {justEaten ? '기록됨 ✓' : '먹었어요 ㅠㅜ'}
           </Text>
         </TouchableOpacity>
       </View>

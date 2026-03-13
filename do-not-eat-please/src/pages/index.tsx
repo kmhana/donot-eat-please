@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7FAFC',
   },
   bgImage: {
-    opacity: 0.3,
+    opacity: 0.6,
     resizeMode: 'contain',
   },
   header: {
