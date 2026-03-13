@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   },
   streak: {
     fontSize: 12,
-    color: '#ED8936',
+    color: '#F56565',
     fontWeight: '600',
     marginTop: 2,
   },

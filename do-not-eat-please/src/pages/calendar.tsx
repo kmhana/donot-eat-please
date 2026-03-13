@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   },
   statsHighlight: {
     fontSize: 13,
-    color: '#ED8936',
+    color: '#E53E3E',
     fontWeight: '600',
   },
   spacer: {
