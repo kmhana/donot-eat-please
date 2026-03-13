@@ -1,6 +1,17 @@
 import { createRoute } from '@granite-js/react-native';
+import { FoodItemRow } from 'components/FoodItemRow';
+import { TabBar } from 'components/TabBar';
+import { useFoodContext } from 'context/FoodContext';
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import type { FoodItem } from 'types';
 
 export const Route = createRoute('/', {
   component: Page,
@@ -8,97 +19,109 @@ export const Route = createRoute('/', {
 
 function Page() {
   const navigation = Route.useNavigation();
+  const { foodItems, isLoaded, logEating, deleteFoodItem } = useFoodContext();
 
-  const goToAboutPage = () => {
-    navigation.navigate('/about');
-  };
+  if (!isLoaded) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3182F6" />
+      </View>
+    );
+  }
 
   return (
-    <Container>
-      <Text style={styles.title}>🎉 Welcome! 🎉</Text>
-      <Text style={styles.subtitle}>
-        This is a demo page for the <Text style={styles.brandText}>Granite</Text> Framework.
-      </Text>
-      <Text style={styles.description}>This page was created to showcase the features of the Granite.</Text>
-      <TouchableOpacity style={styles.button} onPress={goToAboutPage}>
-        <Text style={styles.buttonText}>Go to About Page</Text>
-      </TouchableOpacity>
-    </Container>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>제발 먹지마..</Text>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate('/add-food')}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
+      </View>
+      <FlatList
+        data={foodItems}
+        keyExtractor={(item: FoodItem) => item.id}
+        renderItem={({ item }) => (
+          <FoodItemRow
+            food={item}
+            onEat={logEating}
+            onDelete={deleteFoodItem}
+          />
+        )}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>아직 참고 있는 음식이 없어요.</Text>
+            <Text style={styles.emptySubText}>+ 버튼으로 추가해보세요!</Text>
+          </View>
+        }
+        style={styles.list}
+      />
+      <TabBar
+        activeTab="home"
+        onNavigateHome={() => {}}
+        onNavigateCalendar={() => navigation.navigate('/calendar')}
+      />
+    </View>
   );
 }
 
-function Container({ children }: { children: React.ReactNode }) {
-  return <View style={styles.container}>{children}</View>;
-}
-
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: 'white',
-    justifyContent: 'center',
+    backgroundColor: '#F7FAFC',
+  },
+  header: {
+    flexDirection: 'row',
     alignItems: 'center',
-  },
-  brandText: {
-    color: '#0064FF',
-    fontWeight: 'bold',
-  },
-  text: {
-    fontSize: 24,
-    color: '#202632',
-    textAlign: 'center',
-    marginBottom: 10,
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '800',
     color: '#1A202C',
-    textAlign: 'center',
-    marginBottom: 16,
   },
-  subtitle: {
-    fontSize: 18,
-    color: '#4A5568',
-    textAlign: 'center',
-    marginBottom: 24,
+  addButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#3182F6',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  description: {
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    lineHeight: 26,
+    fontWeight: '300',
+  },
+  list: {
+    flex: 1,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    paddingTop: 80,
+  },
+  emptyText: {
     fontSize: 16,
     color: '#718096',
-    textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 24,
+    marginBottom: 8,
   },
-  button: {
-    backgroundColor: '#0064FF',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  codeContainer: {
-    padding: 8,
-    backgroundColor: '#333',
-    borderRadius: 4,
-    width: '100%',
-  },
-  code: {
-    color: 'white',
-    fontFamily: 'monospace',
-    letterSpacing: 0.5,
+  emptySubText: {
     fontSize: 14,
+    color: '#A0AEC0',
   },
 });
