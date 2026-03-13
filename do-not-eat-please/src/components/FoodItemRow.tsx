@@ -1,5 +1,13 @@
+import { Icon } from '@toss/tds-react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import type { FoodItem } from '../types';
 
 interface FoodItemRowProps {
@@ -11,6 +19,7 @@ interface FoodItemRowProps {
 export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
   const [justEaten, setJustEaten] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const swipeableRef = useRef<Swipeable | null>(null);
 
   useEffect(() => {
     return () => {
@@ -25,34 +34,55 @@ export function FoodItemRow({ food, onEat, onDelete }: FoodItemRowProps) {
     timerRef.current = setTimeout(() => setJustEaten(false), 1500);
   };
 
-  const handleLongPress = () => {
-    Alert.alert('음식 삭제', `"${food.name}"을(를) 목록에서 삭제할까요?`, [
-      { text: '취소', style: 'cancel' },
-      {
-        text: '삭제',
-        style: 'destructive',
-        onPress: () => {
-          void onDelete(food.id);
-        },
-      },
-    ]);
+  const handleDelete = () => {
+    swipeableRef.current?.close();
+    void onDelete(food.id);
+  };
+
+  const renderRightActions = (
+    _progress: Animated.AnimatedInterpolation<number>,
+    dragX: Animated.AnimatedInterpolation<number>,
+  ) => {
+    const scale = dragX.interpolate({
+      inputRange: [-80, 0],
+      outputRange: [1, 0.5],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <TouchableOpacity
+        style={styles.deleteAction}
+        onPress={handleDelete}
+        activeOpacity={0.8}
+      >
+        <Animated.View style={{ transform: [{ scale }] }}>
+          <Icon name="icon-bin-mono" size={22} color="#FFFFFF" />
+          <Text style={styles.deleteActionText}>삭제</Text>
+        </Animated.View>
+      </TouchableOpacity>
+    );
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.name} onLongPress={handleLongPress}>
-        {food.name}
-      </Text>
-      <TouchableOpacity
-        style={[styles.eatButton, justEaten && styles.eatButtonDone]}
-        onPress={handleEat}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.eatButtonText}>
-          {justEaten ? '기록됨 ✓' : '먹었어요'}
-        </Text>
-      </TouchableOpacity>
-    </View>
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      overshootRight={false}
+      rightThreshold={40}
+    >
+      <View style={styles.container}>
+        <Text style={styles.name}>{food.name}</Text>
+        <TouchableOpacity
+          style={[styles.eatButton, justEaten && styles.eatButtonDone]}
+          onPress={handleEat}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.eatButtonText}>
+            {justEaten ? '기록됨 ✓' : '먹었어요'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </Swipeable>
   );
 }
 
@@ -84,5 +114,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '600',
+  },
+  deleteAction: {
+    backgroundColor: '#E53E3E',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+  },
+  deleteActionText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 4,
   },
 });

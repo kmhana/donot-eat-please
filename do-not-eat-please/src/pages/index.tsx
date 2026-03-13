@@ -16,6 +16,7 @@ import type { FoodItem } from '../types';
 
 export const Route = createRoute('/', {
   component: Page,
+  screenOptions: { animation: 'none' },
 });
 
 function Page() {
@@ -33,7 +34,7 @@ function Page() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>제발 먹지마..</Text>
+        <Text style={styles.title}>먹지마 제발..</Text>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => navigation.navigate('/add-food')}
@@ -63,7 +64,9 @@ function Page() {
       <TabBar
         activeTab="home"
         onNavigateHome={() => {}}
-        onNavigateCalendar={() => navigation.navigate('/calendar')}
+        onNavigateCalendar={() =>
+          navigation.reset({ index: 0, routes: [{ name: '/calendar' }] })
+        }
       />
     </View>
   );

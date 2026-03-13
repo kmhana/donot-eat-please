@@ -18,6 +18,7 @@ import { useFoodContext } from '../context/FoodContext';
 
 export const Route = createRoute('/calendar', {
   component: Page,
+  screenOptions: { animation: 'none' },
 });
 
 function Page() {
@@ -73,6 +74,7 @@ function Page() {
         foodItems={foodItems}
         onDayPress={handleDayPress}
       />
+      {selectedDay === null && <View style={styles.spacer} />}
       {selectedDay !== null && (
         <View style={styles.dayDetail}>
           <View style={styles.dayDetailHeader}>
@@ -115,7 +117,9 @@ function Page() {
       )}
       <TabBar
         activeTab="calendar"
-        onNavigateHome={() => navigation.goBack()}
+        onNavigateHome={() =>
+          navigation.reset({ index: 0, routes: [{ name: '/' }] })
+        }
         onNavigateCalendar={() => {}}
       />
     </View>
@@ -126,6 +130,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  spacer: {
+    flex: 1,
   },
   dayDetail: {
     flex: 1,
